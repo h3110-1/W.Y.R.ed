@@ -11,8 +11,8 @@ import {
 } from '../lib/gameActions'
 
 const RESULT_STYLES = {
-  A: { bar: 'bg-a', text: 'text-a', chip: 'border-a/40 bg-a/10 text-a' },
-  B: { bar: 'bg-b', text: 'text-b', chip: 'border-b/40 bg-b/10 text-b' },
+  A: { bar: 'bg-opta', text: 'text-opta', chip: 'border-opta/40 bg-opta/10 text-opta' },
+  B: { bar: 'bg-optb', text: 'text-optb', chip: 'border-optb/40 bg-optb/10 text-optb' },
 } as const
 
 function ResultRow({
@@ -52,7 +52,7 @@ function ResultRow({
         <span className="text-xs text-muted">
           {count} vote{count === 1 ? '' : 's'}
         </span>
-        {winner && count > 0 && <Pill tone={letter === 'A' ? 'a' : 'b'}>winner</Pill>}
+        {winner && count > 0 && <Pill tone={letter === 'A' ? 'opta' : 'optb'}>winner</Pill>}
       </div>
       {showVoters && voters.length > 0 && (
         <div className="mt-2 flex flex-wrap gap-1.5">

@@ -37,7 +37,7 @@ function WyrFields({
   return (
     <div className="flex flex-col gap-2">
       <div className="flex items-center gap-2">
-        <span className="w-7 shrink-0 text-center text-sm font-black text-a">A</span>
+        <span className="w-7 shrink-0 text-center text-sm font-black text-opta">A</span>
         <Input
           id={`${idPrefix}-a`}
           placeholder="Would you rather…"
@@ -47,7 +47,7 @@ function WyrFields({
         />
       </div>
       <div className="flex items-center gap-2">
-        <span className="w-7 shrink-0 text-center text-sm font-black text-b">B</span>
+        <span className="w-7 shrink-0 text-center text-sm font-black text-optb">B</span>
         <Input
           id={`${idPrefix}-b`}
           placeholder="…or rather?"
@@ -146,9 +146,9 @@ function EditableWyr({
   return (
     <div className="rounded-xl border border-border bg-surface-2 p-3">
       <div className="text-sm">
-        <span className="font-semibold text-a">{question.optionA}</span>
+        <span className="font-semibold text-opta">{question.optionA}</span>
         <span className="px-1.5 text-muted">vs</span>
-        <span className="font-semibold text-b">{question.optionB}</span>
+        <span className="font-semibold text-optb">{question.optionB}</span>
       </div>
       <div className="mt-2 flex items-center justify-between">
         {showAuthor ? (

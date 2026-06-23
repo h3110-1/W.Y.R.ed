@@ -99,9 +99,9 @@ export function Results({
           <Card className="text-center">
             <Pill tone="warn">most divisive</Pill>
             <p className="mt-2 text-sm">
-              <span className="font-semibold text-a">{mostDivisive.question.optionA}</span>
+              <span className="font-semibold text-opta">{mostDivisive.question.optionA}</span>
               <span className="px-1 text-muted">vs</span>
-              <span className="font-semibold text-b">{mostDivisive.question.optionB}</span>
+              <span className="font-semibold text-optb">{mostDivisive.question.optionB}</span>
             </p>
             <p className="mt-1 text-xs text-muted">
               split {mostDivisive.aPct}% / {100 - mostDivisive.aPct}%
@@ -118,21 +118,21 @@ export function Results({
                   <span className="text-xs font-bold text-muted">{i + 1}.</span>
                   <span className="flex-1">
                     <span
-                      className={r.a >= r.b ? 'font-bold text-a' : 'text-a/70'}
+                      className={r.a >= r.b ? 'font-bold text-opta' : 'text-opta/70'}
                     >
                       {r.question.optionA}
                     </span>
                     <span className="px-1 text-muted">vs</span>
                     <span
-                      className={r.b > r.a ? 'font-bold text-b' : 'text-b/70'}
+                      className={r.b > r.a ? 'font-bold text-optb' : 'text-optb/70'}
                     >
                       {r.question.optionB}
                     </span>
                   </span>
                 </div>
                 <div className="ml-5 flex h-2 overflow-hidden rounded-full bg-surface-2">
-                  <div className="h-full bg-a" style={{ width: `${r.aPct}%` }} />
-                  <div className="h-full bg-b" style={{ width: `${100 - r.aPct}%` }} />
+                  <div className="h-full bg-opta" style={{ width: `${r.aPct}%` }} />
+                  <div className="h-full bg-optb" style={{ width: `${100 - r.aPct}%` }} />
                 </div>
                 <div className="ml-5 flex justify-between text-[11px] text-muted">
                   <span>

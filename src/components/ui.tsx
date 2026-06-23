@@ -94,7 +94,7 @@ export function Pill({
   tone = 'default',
 }: {
   children: ReactNode
-  tone?: 'default' | 'good' | 'warn' | 'a' | 'b'
+  tone?: 'default' | 'good' | 'warn' | 'a' | 'b' | 'opta' | 'optb'
 }) {
   const tones: Record<string, string> = {
     default: 'bg-surface-2 text-muted border-border',
@@ -102,6 +102,8 @@ export function Pill({
     warn: 'bg-warn/15 text-warn border-warn/30',
     a: 'bg-a/15 text-a border-a/30',
     b: 'bg-b/15 text-b border-b/30',
+    opta: 'bg-opta/15 text-opta border-opta/30',
+    optb: 'bg-optb/15 text-optb border-optb/30',
   }
   return (
     <span

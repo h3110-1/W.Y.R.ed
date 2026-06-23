@@ -11,6 +11,10 @@
   --color-brand-2: #ff5ca8;
   --color-a: #38bdf8;
   --color-b: #fb7185;
+
+  /* The two would-you-rather options: A = red (left), B = blue (right) */
+  --color-opta: #ef4444;
+  --color-optb: #3b82f6;
   --color-good: #34d399;
   --color-warn: #fbbf24;
 
