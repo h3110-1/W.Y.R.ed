@@ -58,7 +58,18 @@ const _schema = i.schema({
       reverse: { on: 'players', has: 'many', label: 'votes' },
     },
   },
-  rooms: {},
+  rooms: {
+    // Ephemeral, per-game channel for transient effects (not persisted).
+    game: {
+      presence: i.entity({}),
+      topics: {
+        // A player tapped an emoji to react to the current question.
+        reaction: i.entity({
+          emoji: i.string(),
+        }),
+      },
+    },
+  },
 })
 
 // This helps Typescript display nicer intellisense

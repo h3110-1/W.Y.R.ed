@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Button, Pill, Screen } from '../components/ui'
 import { TimerBar } from '../components/TimerBar'
+import { Reactions } from '../components/Reactions'
 import {
   advancePhase,
   castVote,
@@ -246,6 +247,8 @@ export function Voting({
         </p>
         <HostSkip show={me.isHost} label="Skip to results" busy={skipping} onClick={skip} />
       </footer>
+
+      <Reactions gameId={game.id} />
     </div>
   )
 }

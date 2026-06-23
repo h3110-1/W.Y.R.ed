@@ -156,10 +156,52 @@ button {
   animation: heatSheen 1.3s linear infinite;
 }
 
+/* Floating emoji reactions: pop in near the bottom, drift up and fade out. */
+@keyframes floatUp {
+  0% {
+    transform: translate(0, 0) scale(0.4) rotate(0deg);
+    opacity: 0;
+  }
+  12% {
+    transform: translate(0, -8vh) scale(1.2) rotate(var(--tilt, 0deg));
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--drift, 0px), -78vh) scale(0.95) rotate(var(--tilt, 0deg));
+    opacity: 0;
+  }
+}
+.reaction-float {
+  animation: floatUp var(--dur, 2600ms) cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+}
+
+/* Picker menu rising out of the bottom-right button. */
+@keyframes reactionMenuIn {
+  0% {
+    transform: translateY(8px) scale(0.9);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+.reaction-menu {
+  animation: reactionMenuIn 0.14s ease-out;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .fire-a,
   .fire-b,
   .heat-sheen {
     animation: none;
+  }
+  .reaction-float {
+    /* Skip the drift; just fade so it still appears and clears itself. */
+    animation: none;
+    opacity: 1;
   }
 }
