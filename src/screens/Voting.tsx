@@ -62,7 +62,7 @@ function pulseSegment(el: HTMLElement | null) {
       { transform: 'scaleY(1.65)', offset: 0.45 },
       { transform: 'scaleY(1)' },
     ],
-    { duration: 520, easing: 'ease-in-out' },
+    { duration: 750, easing: 'ease-in-out' },
   )
 }
 
