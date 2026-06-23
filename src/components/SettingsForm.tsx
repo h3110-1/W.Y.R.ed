@@ -10,12 +10,14 @@ function Stepper({
   value,
   min,
   max,
+  step = 1,
   suffix,
   onChange,
 }: {
   value: number
   min: number
   max: number
+  step?: number
   suffix?: string
   onChange: (n: number) => void
 }) {
@@ -23,7 +25,7 @@ function Stepper({
     <div className="flex items-center gap-3">
       <button
         type="button"
-        onClick={() => onChange(clamp(value - 1, min, max))}
+        onClick={() => onChange(clamp(value - step, min, max))}
         className="h-10 w-10 shrink-0 rounded-xl border border-border bg-surface-2 text-xl font-bold active:scale-95 disabled:opacity-30"
         disabled={value <= min}
         aria-label="decrease"
@@ -36,7 +38,7 @@ function Stepper({
       </div>
       <button
         type="button"
-        onClick={() => onChange(clamp(value + 1, min, max))}
+        onClick={() => onChange(clamp(value + step, min, max))}
         className="h-10 w-10 shrink-0 rounded-xl border border-border bg-surface-2 text-xl font-bold active:scale-95 disabled:opacity-30"
         disabled={value >= max}
         aria-label="increase"
@@ -115,6 +117,7 @@ export function SettingsForm({
           value={settings.voteSeconds}
           min={b.voteSeconds.min}
           max={b.voteSeconds.max}
+          step={5}
           suffix="s"
           onChange={(n) => set({ voteSeconds: n })}
         />
@@ -126,6 +129,7 @@ export function SettingsForm({
           value={settings.revealSeconds}
           min={b.revealSeconds.min}
           max={b.revealSeconds.max}
+          step={5}
           suffix="s"
           onChange={(n) => set({ revealSeconds: n })}
         />

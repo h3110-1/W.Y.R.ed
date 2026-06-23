@@ -21,7 +21,7 @@ export const DEFAULT_SETTINGS: GameSettings = {
 export const SETTINGS_BOUNDS = {
   perPlayerCount: { min: 1, max: 10 },
   voteSeconds: { min: 5, max: 180 },
-  revealSeconds: { min: 3, max: 120 },
+  revealSeconds: { min: 5, max: 120 },
 }
 
 export const MIN_PLAYERS = 2
