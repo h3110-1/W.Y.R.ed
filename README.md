@@ -88,21 +88,25 @@ npm run build    # type-checks then outputs static site to dist/
 npm run preview  # serve the production build locally
 ```
 
-## Deploy to Cloudflare Pages
+## Deploy to Cloudflare (Workers Static Assets)
 
 1. Push this repo to GitHub/GitLab.
-2. In the Cloudflare dashboard: **Workers & Pages → Create → Pages → Connect to
-   Git**, select the repo.
+2. In the Cloudflare dashboard: **Workers & Pages → Create → Connect to Git**,
+   select the repo.
 3. Build settings:
-   - **Framework preset:** Vite (or None)
    - **Build command:** `npm run build`
-   - **Build output directory:** `dist`
+   - **Build output directory / assets:** `dist`
 4. (Optional) add `VITE_INSTANT_APP_ID` under the project's environment
-   variables to override the baked-in App ID.
-5. Deploy. `public/_redirects` (`/* /index.html 200`) keeps the SPA routes
-   working.
+   variables to override the baked-in App ID, and `NODE_VERSION=20`.
+5. Deploy.
 
-Prefer the CLI? `npm run build` then `npx wrangler pages deploy dist`.
+SPA routing (deep links like `?join=ABCD` and refreshes) is handled by
+[`wrangler.jsonc`](wrangler.jsonc) via `assets.not_found_handling:
+"single-page-application"` — **not** a `_redirects` file. The newer Workers
+Static Assets pipeline rejects the classic `/* /index.html 200` redirect as a
+loop, so this project uses the supported SPA setting instead.
+
+Prefer the CLI? `npm run build` then `npx wrangler deploy`.
 
 ## Project layout
 

@@ -1,0 +1,12 @@
+{
+  // Cloudflare Workers Static Assets deployment.
+  // Deploys the Vite build output (./dist) as static assets with SPA routing.
+  // SPA fallback is handled here (not via public/_redirects, which the Workers
+  // Static Assets pipeline rejects as a redirect loop).
+  "name": "wyred",
+  "compatibility_date": "2025-06-01",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "single-page-application"
+  }
+}
