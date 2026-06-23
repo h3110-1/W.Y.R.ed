@@ -52,6 +52,48 @@ function OptionSide({
   )
 }
 
+// Live, anonymous vote tally shown once you've locked your own pick. The
+// leading colour burns with a flickering fire-like glow.
+function LiveTally({ aCount, bCount }: { aCount: number; bCount: number }) {
+  const cast = aCount + bCount
+  const aPct = cast === 0 ? 50 : Math.round((aCount / cast) * 100)
+  const bPct = 100 - aPct
+  const leading: 'A' | 'B' | 'tie' =
+    aCount > bCount ? 'A' : bCount > aCount ? 'B' : 'tie'
+
+  return (
+    <div className="animate-pop">
+      <div className="mb-1 flex items-center justify-between text-xs font-bold">
+        <span className="text-opta">{aPct}%</span>
+        <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest text-muted">
+          <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-good" />
+          live
+        </span>
+        <span className="text-optb">{bPct}%</span>
+      </div>
+      <div className="relative h-4 rounded-full bg-surface-2">
+        {/* A grows from the left, B from the right; they meet at the frontier */}
+        <div
+          className={`absolute left-0 top-0 h-full overflow-hidden rounded-l-full rounded-r-sm bg-opta transition-[width] duration-500 ease-out ${
+            leading === 'A' ? 'fire-a z-10' : ''
+          }`}
+          style={{ width: `${aPct}%` }}
+        >
+          {leading === 'A' && <div className="heat-sheen absolute inset-y-0 w-1/3" />}
+        </div>
+        <div
+          className={`absolute right-0 top-0 h-full overflow-hidden rounded-r-full rounded-l-sm bg-optb transition-[width] duration-500 ease-out ${
+            leading === 'B' ? 'fire-b z-10' : ''
+          }`}
+          style={{ width: `${bPct}%` }}
+        >
+          {leading === 'B' && <div className="heat-sheen absolute inset-y-0 w-1/3" />}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export function Voting({
   game,
   players,
@@ -79,6 +121,8 @@ export function Voting({
   const locked = myVote !== undefined
   const votedIds = new Set(votes.map((v) => v.player?.id).filter(Boolean) as string[])
   const notVoted = players.filter((p) => !votedIds.has(p.id))
+  const aCount = votes.filter((v) => v.choice === 'A').length
+  const bCount = votes.filter((v) => v.choice === 'B').length
 
   async function vote(choice: Choice) {
     // Votes are final: ignore taps once a choice is locked in.
@@ -126,6 +170,12 @@ export function Voting({
           <p className="mt-2 text-center text-xs text-muted">
             written by {question.creator?.username ?? '—'}
           </p>
+        )}
+        {/* Live results unlock once you've voted */}
+        {locked && (
+          <div className="mt-3">
+            <LiveTally aCount={aCount} bCount={bCount} />
+          </div>
         )}
       </header>
 

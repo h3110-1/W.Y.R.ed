@@ -63,3 +63,103 @@ button {
 .animate-pop {
   animation: pop 0.18s ease-out;
 }
+
+/* Live tally "battle bar": the leading side burns with a flickering glow in
+   its own colour (red for A, blue for B). */
+@keyframes fireGlowA {
+  0% {
+    box-shadow:
+      0 0 5px rgba(239, 68, 68, 0.55),
+      0 0 11px rgba(239, 68, 68, 0.35);
+    filter: brightness(1.02) saturate(1.1);
+  }
+  30% {
+    box-shadow:
+      0 0 10px rgba(248, 113, 113, 0.8),
+      0 0 20px rgba(239, 68, 68, 0.5);
+    filter: brightness(1.16) saturate(1.2);
+  }
+  55% {
+    box-shadow:
+      0 0 7px rgba(239, 68, 68, 0.65),
+      0 0 15px rgba(239, 68, 68, 0.4);
+    filter: brightness(1.06) saturate(1.12);
+  }
+  80% {
+    box-shadow:
+      0 0 13px rgba(248, 113, 113, 0.92),
+      0 0 26px rgba(239, 68, 68, 0.55);
+    filter: brightness(1.24) saturate(1.28);
+  }
+  100% {
+    box-shadow:
+      0 0 5px rgba(239, 68, 68, 0.55),
+      0 0 11px rgba(239, 68, 68, 0.35);
+    filter: brightness(1.02) saturate(1.1);
+  }
+}
+@keyframes fireGlowB {
+  0% {
+    box-shadow:
+      0 0 5px rgba(59, 130, 246, 0.55),
+      0 0 11px rgba(59, 130, 246, 0.35);
+    filter: brightness(1.02) saturate(1.1);
+  }
+  30% {
+    box-shadow:
+      0 0 10px rgba(96, 165, 250, 0.8),
+      0 0 20px rgba(59, 130, 246, 0.5);
+    filter: brightness(1.16) saturate(1.2);
+  }
+  55% {
+    box-shadow:
+      0 0 7px rgba(59, 130, 246, 0.65),
+      0 0 15px rgba(59, 130, 246, 0.4);
+    filter: brightness(1.06) saturate(1.12);
+  }
+  80% {
+    box-shadow:
+      0 0 13px rgba(96, 165, 250, 0.92),
+      0 0 26px rgba(59, 130, 246, 0.55);
+    filter: brightness(1.24) saturate(1.28);
+  }
+  100% {
+    box-shadow:
+      0 0 5px rgba(59, 130, 246, 0.55),
+      0 0 11px rgba(59, 130, 246, 0.35);
+    filter: brightness(1.02) saturate(1.1);
+  }
+}
+.fire-a {
+  animation: fireGlowA 1.25s ease-in-out infinite;
+}
+.fire-b {
+  animation: fireGlowB 1.25s ease-in-out infinite;
+}
+
+/* moving heat shimmer across the leading segment */
+@keyframes heatSheen {
+  0% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(120%);
+  }
+}
+.heat-sheen {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.45),
+    transparent
+  );
+  animation: heatSheen 1.3s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fire-a,
+  .fire-b,
+  .heat-sheen {
+    animation: none;
+  }
+}
