@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { Button, Card, Pill, Screen } from '../components/ui'
 import {
   closeGame,
+  returnToLobby,
   type GameRow,
   type PlayerRow,
   type QuestionRow,
@@ -29,7 +30,7 @@ export function Results({
   isHost: boolean
   onLeave: () => void
 }) {
-  const [closing, setClosing] = useState(false)
+  const [busy, setBusy] = useState<'' | 'lobby' | 'close'>('')
 
   const recaps: Recap[] = useMemo(() => {
     return game.questionOrder
@@ -59,12 +60,26 @@ export function Results({
     )
   }, [recaps])
 
+  // Reset to the lobby for another round. On success the phase flips to 'lobby'
+  // and GameContainer re-renders everyone into the lobby — no need to navigate.
+  async function playAgain() {
+    setBusy('lobby')
+    try {
+      await returnToLobby(
+        game.id,
+        questions.map((q) => q.id),
+      )
+    } catch {
+      setBusy('')
+    }
+  }
+
   async function close() {
-    setClosing(true)
+    setBusy('close')
     try {
       await closeGame(game.id)
     } catch {
-      setClosing(false)
+      setBusy('')
       return
     }
     onLeave()
@@ -133,17 +148,26 @@ export function Results({
         <div className="sticky bottom-0 -mx-4 flex flex-col gap-2 bg-gradient-to-t from-bg via-bg to-transparent px-4 pb-3 pt-4">
           {isHost ? (
             <>
-              <Button full onClick={close} disabled={closing}>
-                {closing ? 'Closing…' : 'Close game'}
+              <Button full onClick={playAgain} disabled={busy !== ''}>
+                {busy === 'lobby' ? 'Back to lobby…' : 'Play again — back to lobby'}
               </Button>
-              <p className="text-center text-xs text-muted">
-                Closing removes the game for everyone.
-              </p>
+              <button
+                onClick={close}
+                disabled={busy !== ''}
+                className="text-center text-xs text-muted underline-offset-2 hover:underline disabled:opacity-40"
+              >
+                {busy === 'close' ? 'Closing…' : 'Or close the game for everyone'}
+              </button>
             </>
           ) : (
-            <Button full variant="secondary" onClick={onLeave}>
-              Leave
-            </Button>
+            <>
+              <p className="text-center text-xs text-muted">
+                Waiting for the host to start another round…
+              </p>
+              <Button full variant="secondary" onClick={onLeave}>
+                Leave
+              </Button>
+            </>
           )}
         </div>
       </div>

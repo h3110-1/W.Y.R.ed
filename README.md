@@ -23,7 +23,9 @@ Built to be **serverless**: a React SPA on **Cloudflare Pages** talking to
      shows who still hasn't voted. Optionally shows who wrote it.
    - **Reveal** — the A/B split, the winner, and (optionally) who voted for what.
    - The **host** can skip the remaining time of either phase.
-5. A **results** recap closes the game.
+5. A **results** recap ends the round. The host can **play again** — everyone is
+   sent back to the lobby (same players and settings, fresh entries) — or close
+   the game for good.
 
 ## Architecture notes
 

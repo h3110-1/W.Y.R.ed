@@ -233,6 +233,26 @@ export async function closeGame(gameId: string): Promise<void> {
   await db.transact(db.tx.games[gameId].delete())
 }
 
+// Host sends everyone back to the lobby for another round: clears the previous
+// questions (votes cascade with them) and resets the game to the lobby phase.
+// Players and settings are kept. All clients re-render to the lobby because the
+// phase changes.
+export async function returnToLobby(
+  gameId: string,
+  questionIds: string[],
+): Promise<void> {
+  await db.transact([
+    ...questionIds.map((qid) => db.tx.questions[qid].delete()),
+    db.tx.games[gameId].update({
+      status: 'lobby',
+      phase: 'lobby',
+      currentIndex: 0,
+      questionOrder: [],
+      phaseEndsAt: null,
+    }),
+  ])
+}
+
 export async function castVote(opts: {
   questionId: string
   playerId: string
