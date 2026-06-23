@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Button, Pill, Screen } from '../components/ui'
 import { TimerBar } from '../components/TimerBar'
 import {
@@ -16,21 +16,26 @@ function OptionSide({
   text,
   selected,
   dimmed,
+  locked,
   onClick,
 }: {
   letter: Choice
   text: string
   selected: boolean
   dimmed: boolean
+  locked: boolean
   onClick: () => void
 }) {
   const bg = letter === 'A' ? 'bg-opta' : 'bg-optb'
   return (
     <button
       onClick={onClick}
-      className={`relative flex flex-1 flex-col items-center justify-center overflow-hidden rounded-3xl p-4 text-center transition-all duration-200 active:scale-[0.98] ${bg} ${
-        selected ? 'shadow-2xl ring-4 ring-white' : ''
-      } ${dimmed ? 'opacity-40 saturate-50' : ''}`}
+      disabled={locked}
+      className={`relative flex flex-1 flex-col items-center justify-center overflow-hidden rounded-3xl p-4 text-center transition-all duration-200 ${
+        locked ? 'cursor-default' : 'active:scale-[0.98]'
+      } ${bg} ${selected ? 'shadow-2xl ring-4 ring-white' : ''} ${
+        dimmed ? 'opacity-40 saturate-50' : ''
+      }`}
     >
       <span className="absolute top-3 select-none text-6xl font-black leading-none text-white/20">
         {letter}
@@ -40,7 +45,7 @@ function OptionSide({
       </span>
       {selected && (
         <span className="absolute bottom-3 inline-flex items-center gap-1 rounded-full bg-white px-3 py-1 text-xs font-bold text-bg shadow">
-          ✓ Your pick
+          ✓ Locked in
         </span>
       )}
     </button>
@@ -63,15 +68,27 @@ export function Voting({
   const qid = game.questionOrder[game.currentIndex]
   const question = useMemo(() => questions.find((q) => q.id === qid), [questions, qid])
   const [skipping, setSkipping] = useState(false)
+  // Locks the choice the instant it's tapped, before the server confirms, so a
+  // fast second tap can't change it. Reset for each new question.
+  const [pendingChoice, setPendingChoice] = useState<Choice | null>(null)
+  useEffect(() => setPendingChoice(null), [qid])
 
   const votes = question?.votes ?? []
-  const myVote = votes.find((v) => v.player?.id === me.id)?.choice as Choice | undefined
+  const serverVote = votes.find((v) => v.player?.id === me.id)?.choice as Choice | undefined
+  const myVote = serverVote ?? pendingChoice ?? undefined
+  const locked = myVote !== undefined
   const votedIds = new Set(votes.map((v) => v.player?.id).filter(Boolean) as string[])
   const notVoted = players.filter((p) => !votedIds.has(p.id))
 
   async function vote(choice: Choice) {
-    if (!question) return
-    await castVote({ questionId: question.id, playerId: me.id, choice })
+    // Votes are final: ignore taps once a choice is locked in.
+    if (!question || locked) return
+    setPendingChoice(choice)
+    try {
+      await castVote({ questionId: question.id, playerId: me.id, choice })
+    } catch {
+      setPendingChoice(null) // let them try again if the write failed
+    }
   }
 
   async function skip() {
@@ -119,6 +136,7 @@ export function Voting({
           text={question.optionA}
           selected={myVote === 'A'}
           dimmed={myVote === 'B'}
+          locked={locked}
           onClick={() => vote('A')}
         />
         <OptionSide
@@ -126,6 +144,7 @@ export function Voting({
           text={question.optionB}
           selected={myVote === 'B'}
           dimmed={myVote === 'A'}
+          locked={locked}
           onClick={() => vote('B')}
         />
         <div className="pointer-events-none absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2">
@@ -136,12 +155,18 @@ export function Voting({
       </div>
 
       <footer className="px-4 pb-1">
-        <p className="pb-1 text-center text-xs text-muted">
-          {notVoted.length === 0
-            ? 'Everyone has voted — waiting for the timer…'
-            : `Still to vote: ${notVoted
-                .map((p) => (p.id === me.id ? 'you' : p.username))
-                .join(', ')}`}
+        <p
+          className={`pb-1 text-center text-xs ${
+            locked ? 'text-muted' : 'font-semibold text-warn'
+          }`}
+        >
+          {!locked
+            ? "Choose carefully — you can't change your answer."
+            : notVoted.length === 0
+              ? 'Everyone has voted — waiting for the timer…'
+              : `Still to vote: ${notVoted
+                  .map((p) => (p.id === me.id ? 'you' : p.username))
+                  .join(', ')}`}
         </p>
         <HostSkip show={me.isHost} label="Skip to results" busy={skipping} onClick={skip} />
       </footer>
