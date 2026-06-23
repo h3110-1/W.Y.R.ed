@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Button, Pill, Screen } from '../components/ui'
 import { TimerBar } from '../components/TimerBar'
 import {
@@ -52,14 +52,38 @@ function OptionSide({
   )
 }
 
+// Smoothly swell a bar segment (~60% taller, eased) when a vote lands on it.
+function pulseSegment(el: HTMLElement | null) {
+  if (!el) return
+  if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return
+  el.animate(
+    [
+      { transform: 'scaleY(1)' },
+      { transform: 'scaleY(1.65)', offset: 0.45 },
+      { transform: 'scaleY(1)' },
+    ],
+    { duration: 520, easing: 'ease-in-out' },
+  )
+}
+
 // Live, anonymous vote tally shown once you've locked your own pick. The
-// leading colour burns with a flickering fire-like glow.
+// leading colour burns with a flickering fire-like glow, and each side swells
+// briefly when a new vote arrives for it.
 function LiveTally({ aCount, bCount }: { aCount: number; bCount: number }) {
   const cast = aCount + bCount
   const aPct = cast === 0 ? 50 : Math.round((aCount / cast) * 100)
   const bPct = 100 - aPct
   const leading: 'A' | 'B' | 'tie' =
     aCount > bCount ? 'A' : bCount > aCount ? 'B' : 'tie'
+
+  const aRef = useRef<HTMLDivElement>(null)
+  const bRef = useRef<HTMLDivElement>(null)
+  const prev = useRef({ a: aCount, b: bCount })
+  useEffect(() => {
+    if (aCount > prev.current.a) pulseSegment(aRef.current)
+    if (bCount > prev.current.b) pulseSegment(bRef.current)
+    prev.current = { a: aCount, b: bCount }
+  }, [aCount, bCount])
 
   return (
     <div className="animate-pop">
@@ -74,6 +98,7 @@ function LiveTally({ aCount, bCount }: { aCount: number; bCount: number }) {
       <div className="relative h-4 rounded-full bg-surface-2">
         {/* A grows from the left, B from the right; they meet at the frontier */}
         <div
+          ref={aRef}
           className={`absolute left-0 top-0 h-full overflow-hidden rounded-l-full rounded-r-sm bg-opta transition-[width] duration-500 ease-out ${
             leading === 'A' ? 'fire-a z-10' : ''
           }`}
@@ -82,6 +107,7 @@ function LiveTally({ aCount, bCount }: { aCount: number; bCount: number }) {
           {leading === 'A' && <div className="heat-sheen absolute inset-y-0 w-1/3" />}
         </div>
         <div
+          ref={bRef}
           className={`absolute right-0 top-0 h-full overflow-hidden rounded-r-full rounded-l-sm bg-optb transition-[width] duration-500 ease-out ${
             leading === 'B' ? 'fire-b z-10' : ''
           }`}
